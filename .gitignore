@@ -7,6 +7,10 @@ venv/
 # ComfyUI - Игнорируем всю директорию
 ComfyUI/
 
+# Старые версии
+.trash
+
+
 # IDE-специфичные файлы
 .vscode/
 .idea/
