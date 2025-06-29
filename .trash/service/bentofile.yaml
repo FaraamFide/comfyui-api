@@ -1,0 +1,21 @@
+# service/bentofile.yaml
+
+service: "service.py:svc"
+name: "comfyui-prod-svc"
+description: "Production service for ComfyUI workflows"
+
+# ВАЖНО: Мы больше не включаем ../comfyui/
+# Мы будем управлять этим окружением через Dockerfile.
+include:
+  - "*.py"
+  - "manifests/*.yaml"
+  - "../workflows/"
+
+# Python-секция остается для локальных запусков, но без лишнего
+python:
+  requirements_txt: "../requirements.lock.txt"
+
+docker:
+  python_version: "3.11"
+  # Мы убираем requirements_txt отсюда, чтобы избежать дублирования.
+  # Управление зависимостями будет полностью в Dockerfile.

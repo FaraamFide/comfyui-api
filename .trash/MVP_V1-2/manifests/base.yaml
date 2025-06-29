@@ -1,0 +1,57 @@
+# service/manifests/base.yaml
+
+# --- Стандартные параметры изображения ---
+width:
+  map_to: "width"
+  type: "integer"
+  default: 1024
+height:
+  map_to: "height"
+  type: "integer"
+  default: 1024
+
+# --- Параметры генерации ---
+prompt:
+  map_to: "prompt"
+  type: "string"
+seed:
+  map_to: "seed"
+  type: "integer"
+  default: "random"
+  special_handlers:
+    - value: "random"
+      action: "generate_random_int"
+      args: { min: 0, max: 18446744073709551615 }
+steps:
+  map_to: "steps"
+  type: "integer"
+  default: 20
+
+# --- Параметры LoRA ---
+lora:
+  map_to: "lora"
+  type: "string"
+  default: "None"
+lora_strength:
+  map_to: "lora_strength"
+  type: "float"
+  default: 1.0
+
+# --- Параметры модели и оптимизации ---
+model:
+  map_to: "model"
+  type: "string"
+  default: "flux1-schnell-Q4_K_S.gguf"
+FBC_optimize:
+  map_to: "FBC_optimize"
+  type: "boolean"
+  default: true
+
+# --- Параметры для будущих I2I workflows ---
+input_image:
+  map_to: "input_image"
+  type: "file" # Специальный тип для файлов
+denoising_strength:
+  map_to: "denoising_strength"
+  type: "float"
+  default: 0.8

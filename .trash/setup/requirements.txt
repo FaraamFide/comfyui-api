@@ -1,0 +1,17 @@
+--extra-index-url https://download.pytorch.org/whl/cu126
+
+# Will be installed from comfyui/requirments.txt
+#torch==2.7.0
+#torchvision
+#torchaudio
+#torchsde
+#numpy
+#Pillow
+
+bentoml==1.4.15
+xformers==0.0.30
+accelerate>=0.21.0
+
+huggingface_hub
+
+

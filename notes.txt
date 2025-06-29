@@ -1,0 +1,19 @@
+comfyui-production-service/
+├── ComfyUI/
+│   └── custom_nodes/
+│       └── comfy-pack/         # <-- Ваш unmodified comfy-pack для GUI
+├── src/
+│   ├── __init__.py             # Пустой
+│   ├── api.py                  # FastAPI эндпоинты
+│   ├── celery_app.py           # Настройка Celery
+│   ├── config.py               # Центральная конфигурация
+│   ├── main.py                 # Точка входа для FastAPI/Uvicorn
+│   ├── manifest_loader.py      # Валидация запросов
+│   ├── workflow_utils.py       # <-- Наша независимая утилита для воркфлоу
+│   ├── worker.py               # Логика Celery воркера
+│   ├── manifests/
+│   │   ├── base.yaml
+│   │   └── workflows.yaml
+│   └── workflows/
+│       └── flux_wavespeed.json
+└── ...

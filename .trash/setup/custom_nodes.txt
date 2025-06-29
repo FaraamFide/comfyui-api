@@ -1,0 +1,12 @@
+# --- НЕОБХОДИМЫЙ МИНИМУМ ДЛЯ API И GGUF ---
+https://github.com/bentoml/comfy-pack.git
+https://github.com/city96/ComfyUI-GGUF.git
+
+# --- PERFORMANCE ---
+https://github.com/chengzeyi/Comfy-WaveSpeed.git
+
+# --- ПОЛЕЗНЫЕ НОДЫ ДЛЯ ЭКСПЕРИМЕНТОВ ---
+https://github.com/rgthree/rgthree-comfy.git
+https://github.com/cubiq/ComfyUI_essentials.git
+https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git
+https://github.com/yolain/ComfyUI-Easy-Use.git

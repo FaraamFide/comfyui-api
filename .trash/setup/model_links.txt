@@ -1,0 +1,23 @@
+# Файлы будут скачиваться в папку, указанную тегом в квадратных скобках.
+# Доступные теги: [unet], [text_encoders], [vae], [clip], [loras]
+
+# --- U-Net GGUF Модели (для /models/unet/) ---
+[unet] https://huggingface.co/city96/FLUX.1-schnell-gguf/resolve/main/flux1-schnell-Q4_K_S.gguf
+[unet] https://huggingface.co/city96/FLUX.1-dev-gguf/resolve/main/flux1-dev-Q4_K_S.gguf
+
+# --- Text Encoder GGUF Модели (для /models/text_encoders/) ---
+[text_encoders] https://huggingface.co/city96/t5-v1_1-xxl-encoder-gguf/resolve/main/t5-v1_1-xxl-encoder-Q8_0.gguf
+[text_encoders] https://huggingface.co/city96/t5-v1_1-xxl-encoder-gguf/resolve/main/t5-v1_1-xxl-encoder-Q5_K_M.gguf
+
+# --- VAE (для /models/vae/) ---
+[vae] https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors
+[vae] https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/vae/diffusion_pytorch_model.safetensors
+
+# --- CLIP Энкодер (для /models/clip/) ---
+# Этот файл будет переименован в clip_l.safetensors для удобства
+[clip] https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/text_encoder/model.safetensors
+
+# --- LoRAs (для /models/loras/) ---
+[loras] https://huggingface.co/openfree/flux-chatgpt-ghibli-lora/resolve/main/flux-chatgpt-ghibli-lora.safetensors
+[loras] https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design/resolve/main/FLUX-dev-lora-Logo-Design.safetensors
+[loras] https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Vector-Journey/resolve/main/FLUX-dev-lora-Vector-Journey.safetensors
