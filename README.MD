@@ -32,7 +32,7 @@ source venv/bin/activate
 Redis serves as the message broker. The recommended way to run it is via Docker:
 
 ```bash
-docker run -d -p 127.0.0.1:6379:6379 --name comfy-redis -e REDIS_ARGS="--requirepass super" redis/redis-stack:latest
+docker run -d -p 127.0.0.1:6379:6379 --name comfy-redis -e REDIS_ARGS="--requirepass redis" redis/redis-stack:latest
 ```
 > **Note:** This binds Redis to `127.0.0.1` for local development. For LAN testing, see the section below.
 
@@ -128,9 +128,9 @@ The `flux_wavespeed` workflow exposes several parameters that can be controlled 
 |-----------------|---------|------------------------------|-----------------------------------------------------------------------------|
 | `prompt`        | string  | (none) - **Required**        | The main text prompt describing the desired image.                          |
 | `model`         | string  | `flux1-schnell-Q4_K_S.gguf`  | The filename of the model to use (e.g., `schnell` or `dev` variants).       |
-| `steps`         | integer | 20                           | The number of diffusion steps. Fewer for `schnell`, more for `dev`.       |
+| `steps`         | integer | 20                           | The number of diffusion steps. Fewer for `schnell`, more for `dev`.         |
 | `seed`          | integer | "random"                     | The random seed for generation. Use "random" for a non-deterministic seed.  |
-| `lora`          | string  | "None"                       | The filename of the LoRA to apply. Use "None" to disable.                 |
+| `lora`          | string  | "None"                       | The filename of the LoRA to apply. Use "None" to disable.                   |
 | `lora_strength` | float   | 1.0                          | The intensity of the applied LoRA (typically 0.0 to 1.0).                   |
 | `width`         | integer | 1024                         | The width of the output image.                                              |
 | `height`        | integer | 1024                         | The height of the output image.                                             |
@@ -165,28 +165,3 @@ Adding a new workflow is a code-free process that only requires editing YAML man
     The `parameters` list references parameter definitions from `src/manifests/base.yaml`. This allows for reusability and consistency. After saving the file, the new `workflow_id: "my_new_workflow"` will be immediately available at the `/generate` endpoint. No service restart is required.
 
 ---
-
-## 5. LAN Testing
-
-To test the service from other devices on your local network, you need to bind the services to `0.0.0.0`.
-
-1.  **Find your machine's LAN IP address** (e.g., `192.168.0.97`). Use `ip addr show` or `ifconfig`.
-
-2.  **Run Redis on `0.0.0.0`:**
-    ```bash
-    docker run -d -p 0.0.0.0:6379:6379 --name comfy-redis -e REDIS_ARGS="--requirepass super" redis/redis-stack:latest
-    ```
-
-3.  **Run Celery and FastAPI using environment variables** to specify the network configuration. Replace `192.168.0.97` with your actual IP.
-
-    **Terminal 2 (Celery Worker):**
-    ```bash
-    REDIS_HOST=192.168.0.97 celery -A src.celery_app worker --loglevel=info --concurrency=1
-    ```
-
-    **Terminal 3 (API Server):**
-    ```bash
-    UVICORN_HOST=0.0.0.0 REDIS_HOST=192.168.0.97 python -m src.main
-    ```
-
-Your API will now be accessible at `http://<YOUR_LAN_IP>:8000`. Ensure your firewall allows traffic on ports `8000` and `6379`.

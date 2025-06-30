@@ -4,8 +4,14 @@ import os
 import sys
 from pathlib import Path
 from typing import List
+from dotenv import load_dotenv
 
-# --- Конфигурация путей (без изменений) ---
+# --- Load .env ---
+project_root_for_env = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=project_root_for_env / '.env')
+
+# --- Path Configuration ---
+# This ensures that ComfyUI's internal modules can be imported by our service.
 project_root = Path(__file__).resolve().parent.parent
 comfyui_path = project_root / "ComfyUI"
 if str(comfyui_path) not in sys.path:
@@ -14,6 +20,10 @@ if str(comfyui_path) not in sys.path:
 import folder_paths
 
 class AppConfig:
+    """
+    Singleton class for all application configuration.
+    Reads settings from environment variables with sensible defaults.
+    """
     _instance = None
 
     def __new__(cls):
@@ -21,38 +31,42 @@ class AppConfig:
             cls._instance = super(AppConfig, cls).__new__(cls)
             cls._instance.initialized = False
             
-            # --- Все остальные настройки (порты, таймауты и т.д.) остаются без изменений ---
+            # --- FastAPI & Network Settings ---
+            # The host the Uvicorn server will bind to. '0.0.0.0' is necessary for
+            # the service to be accessible from the host machine when running in WSL2/Docker.
             cls._instance.UVICORN_HOST = os.getenv("UVICORN_HOST", "0.0.0.0")
             cls._instance.UVICORN_PORT = int(os.getenv("UVICORN_PORT", 8000))
-            redis_password = os.getenv("REDIS_PASSWORD", "super")
+
+            # The public-facing IP used to generate correct download URLs.
+            # For local WSL2 development, this should be '127.0.0.1' to be accessible
+            # from the Windows host's browser. For LAN, it would be the machine's LAN IP.
+            cls._instance.PUBLIC_IP = os.getenv("PUBLIC_IP", "127.0.0.1")
+
+            # --- Celery & Redis Settings ---
+            redis_password = os.getenv("REDIS_PASSWORD", "redis")
             redis_host = os.getenv("REDIS_HOST", "localhost")
             redis_port = os.getenv("REDIS_PORT", "6379")
             redis_db = os.getenv("REDIS_DB", "0")
             cls._instance.CELERY_BROKER_URL = f"redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}"
             cls._instance.CELERY_BACKEND_URL = cls._instance.CELERY_BROKER_URL
+
+            # --- Timeout Settings (seconds) ---
             cls._instance.COMFYUI_STARTUP_TIMEOUT = int(os.getenv("COMFYUI_STARTUP_TIMEOUT", 120))
             cls._instance.CELERY_TASK_TIME_LIMIT = int(os.getenv("CELERY_TASK_TIME_LIMIT", 600))
             cls._instance.CELERY_TASK_AIOHTTP_TIMEOUT = int(os.getenv("CELERY_TASK_AIOHTTP_TIMEOUT", 300))
+
+            # --- Logging Settings ---
             cls._instance.LOG_LEVEL = os.getenv("LOG_LEVEL", "info").lower()
             cls._instance.AVAILABLE_MODELS: List[str] = []
             cls._instance.AVAILABLE_LORAS: List[str] = []
 
-
-            # --- Сетевые настройки FastAPI ---
-            cls._instance.UVICORN_HOST = os.getenv("UVICORN_HOST", "0.0.0.0")
-            cls._instance.UVICORN_PORT = int(os.getenv("UVICORN_PORT", 8000))
-            # --- НОВАЯ ПЕРЕМЕННАЯ ---
-            # Этот IP будет использоваться для генерации ссылок на скачивание.
-            # По умолчанию пытаемся взять его из окружения, иначе используем localhost.
-            cls._instance.PUBLIC_IP = os.getenv("PUBLIC_IP", "127.0.0.1")
-
-
         return cls._instance
-    
-
 
     def initialize(self):
-        """Явно инициализирует пути ComfyUI и сканирует модели."""
+        """
+        Performs one-time setup for ComfyUI paths and scans for available models.
+        This must be called before the application starts accepting requests.
+        """
         if self.initialized:
             return
 
@@ -72,15 +86,10 @@ class AppConfig:
         folder_paths.set_input_directory(str(input_directory))
         folder_paths.set_temp_directory(str(temp_directory))
 
-        # --- ИЗМЕНЕНИЕ: ТОЧНАЯ ЛОГИКА СКАНИРОВАНИЯ С БЕЛЫМ СПИСКОМ ---
         
-        # Определяем "белый список" валидных расширений для моделей
+        # Scan for models using a whitelist of valid file extensions.
         VALID_MODEL_EXTENSIONS = {".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".gguf"}
-        
-        model_dirs_to_scan = [
-            comfyui_path / "models" / "checkpoints",
-            comfyui_path / "models" / "unet"
-        ]
+        model_dirs_to_scan = [comfyui_path / "models" / "checkpoints", comfyui_path / "models" / "unet"]
         
         all_models = set()
         for model_dir in model_dirs_to_scan:
@@ -93,7 +102,7 @@ class AppConfig:
         
         self.AVAILABLE_MODELS = sorted(list(all_models))
 
-        # Логика для LoRA остается прежней, так как она использует стандартный folder_paths, который уже фильтрует расширения
+        # Scan for LoRAs using ComfyUI's built-in function, which handles extensions correctly.
         lora_dirs = ["loras"]
         all_loras = set()
         for dir_type in lora_dirs:
@@ -115,4 +124,5 @@ class AppConfig:
 
         self.initialized = True
 
+# Global singleton instance for easy access across the application.
 app_config = AppConfig()

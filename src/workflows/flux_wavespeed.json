@@ -223,7 +223,7 @@
   },
   "41": {
     "inputs": {
-      "clip_name1": "t5-v1_1-xxl-encoder-Q8_0.gguf",
+      "clip_name1": "t5-v1_1-xxl-encoder-Q5_K_M.gguf",
       "clip_name2": "clip_l.safetensors",
       "type": "flux"
     },

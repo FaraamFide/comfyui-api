@@ -6,14 +6,16 @@ import random
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
+
+
 # --- Конфигурация (без изменений) ---
-API_BASE_URL = "http://127.0.0.1:8000"
+API_BASE_URL = f"http://127.0.0.1:8000"
 TOTAL_REQUESTS = 15
 CONCURRENT_BATCH_SIZE = 3
 
 MODELS = {
     "schnell": {"name": "flux1-schnell-Q4_K_S.gguf", "steps_min": 1, "steps_max": 4},
-    "dev": {"name": "flux1-dev-Q4_K_S.gguf", "steps_min": 15, "steps_max": 20}
+    "dev": {"name": "flux1-dev-Q4_K_S.gguf", "steps_min": 1, "steps_max": 6}
 }
 
 VECTOR_JOURNEY_PROMPTS = [
