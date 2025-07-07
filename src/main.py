@@ -7,11 +7,12 @@ from .api import app
 
 def main():
     """
-    Главная функция для запуска приложения.
-    Инициализирует конфигурацию и стартует Uvicorn.
+    Main function to run the application.
+    Initializes the configuration and starts Uvicorn.
     """
     print("--- ComfyUI Production Service ---")
     
+    # This must be called once before the server starts.
     app_config.initialize()
     
     print(f"\nStarting FastAPI server with Uvicorn on {app_config.UVICORN_HOST}:{app_config.UVICORN_PORT}...")

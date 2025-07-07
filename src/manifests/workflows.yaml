@@ -1,7 +1,7 @@
 # service/manifests/workflows.yaml
 
-flux_wavespeed:
-  workflow_file: "flux_wavespeed.json"
+flux_default:
+  workflow_file: "flux_default.json"
   description: "Optimized Flux T2I with full API control."
   parameters:
     - prompt # Использует параметр "prompt" из base.yaml

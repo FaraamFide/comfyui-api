@@ -8,33 +8,36 @@ logger = logging.getLogger(__name__)
 
 def populate_workflow(workflow_data: Dict[str, Any], api_params: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Вставляет параметры из API в JSON-объект workflow.
-    Это легковесная, контролируемая и независимая функция.
+    Injects parameters from the API into a ComfyUI workflow JSON object.
+    This is a lightweight, controlled, and independent function.
 
-    Она ищет узлы в `workflow_data` по их заголовку (`_meta.title`)
-    и заменяет значение в `inputs.value` на значение из `api_params`.
+    It finds nodes in `workflow_data` by their title (`_meta.title`)
+    and replaces the value in `inputs.value` with the value from `api_params`.
 
     Args:
-        workflow_data: Исходный JSON воркфлоу, загруженный из файла.
-        api_params: Словарь с параметрами, пришедшими из API-запроса.
-                    Ключи этого словаря должны совпадать с `_meta.title`
-                    входных узлов в воркфлоу.
+        workflow_data: The source workflow JSON loaded from a file.
+        api_params: A dictionary of parameters from the API request.
+                    The keys of this dictionary should match the `_meta.title`
+                    of the input nodes in the workflow.
 
     Returns:
-        Новый словарь воркфлоу с подставленными значениями.
+        A new workflow dictionary with the populated values.
     """
     workflow = copy.deepcopy(workflow_data)
 
+    # Create a map from node titles to node IDs for efficient lookup
     title_to_node_id_map: Dict[str, str] = {}
     for node_id, node_info in workflow.items():
         title = node_info.get("_meta", {}).get("title")
         if title:
             title_to_node_id_map[title] = node_id
 
+    # Iterate through the API parameters and populate the corresponding nodes
     for param_name, param_value in api_params.items():
         if param_name in title_to_node_id_map:
             target_node_id = title_to_node_id_map[param_name]
             
+            # Ensure the node has the expected structure before modifying it
             if 'inputs' in workflow[target_node_id] and 'value' in workflow[target_node_id]['inputs']:
                 workflow[target_node_id]['inputs']['value'] = param_value
                 logger.debug(f"Populated node '{target_node_id}' (title: '{param_name}') with value: {param_value}")

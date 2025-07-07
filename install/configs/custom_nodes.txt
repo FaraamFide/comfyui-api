@@ -1,0 +1,6 @@
+https://github.com/FaraamFide/ComfyUI-ParamNodes.git
+https://github.com/chengzeyi/Comfy-WaveSpeed.git
+https://github.com/city96/ComfyUI-GGUF.git
+https://github.com/cubiq/ComfyUI_essentials.git
+https://github.com/ltdrdata/ComfyUI-Impact-Pack.git
+https://github.com/yolain/ComfyUI-Easy-Use.git

@@ -1,4 +1,4 @@
-# src/config.py (ФИНАЛЬНАЯ ВЕРСИЯ)
+# src/config.py
 
 import os
 import sys
@@ -37,10 +37,9 @@ class AppConfig:
             cls._instance.UVICORN_HOST = os.getenv("UVICORN_HOST", "0.0.0.0")
             cls._instance.UVICORN_PORT = int(os.getenv("UVICORN_PORT", 8000))
 
-            # The public-facing IP used to generate correct download URLs.
-            # For local WSL2 development, this should be '127.0.0.1' to be accessible
-            # from the Windows host's browser. For LAN, it would be the machine's LAN IP.
-            cls._instance.PUBLIC_IP = os.getenv("PUBLIC_IP", "127.0.0.1")
+            # The public-facing URL base used to generate correct download URLs.
+            # For local development, this should be 'http://127.0.0.1:8000'.
+            cls._instance.PUBLIC_IP = os.getenv("PUBLIC_IP", "http://127.0.0.1:8000")
 
             # --- Celery & Redis Settings ---
             redis_password = os.getenv("REDIS_PASSWORD", "redis")
@@ -86,7 +85,6 @@ class AppConfig:
         folder_paths.set_input_directory(str(input_directory))
         folder_paths.set_temp_directory(str(temp_directory))
 
-        
         # Scan for models using a whitelist of valid file extensions.
         VALID_MODEL_EXTENSIONS = {".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".gguf"}
         model_dirs_to_scan = [comfyui_path / "models" / "checkpoints", comfyui_path / "models" / "unet"]
@@ -96,7 +94,7 @@ class AppConfig:
             if not model_dir.is_dir():
                 continue
             for filepath in model_dir.rglob('*'):
-                # Условие: это файл, его расширение есть в нашем белом списке, и это не системный файл (не начинается с точки)
+                # Condition: it's a file, its extension is in our whitelist, and it's not a hidden file.
                 if filepath.is_file() and filepath.suffix.lower() in VALID_MODEL_EXTENSIONS and not filepath.name.startswith('.'):
                     all_models.add(filepath.name)
         
@@ -107,7 +105,7 @@ class AppConfig:
         all_loras = set()
         for dir_type in lora_dirs:
             try:
-                # get_filename_list уже корректно фильтрует по расширениям
+                # get_filename_list already filters by extension correctly.
                 all_loras.update(folder_paths.get_filename_list(dir_type))
             except Exception as e:
                 print(f"Warning: Could not read LoRAs from '{dir_type}' directory: {e}")

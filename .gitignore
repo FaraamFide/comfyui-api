@@ -6,6 +6,9 @@ venv/
 
 # ComfyUI - Игнорируем всю директорию
 ComfyUI/
+HTML_TEST
+._lora_assets
+
 
 # Старые версии
 .trash

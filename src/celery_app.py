@@ -2,7 +2,7 @@
 
 from celery import Celery
 
-# Используем относительный импорт
+# Use a relative import
 from .config import app_config
 
 celery_app = Celery(
@@ -16,6 +16,6 @@ celery_app.conf.update(
     task_serializer='json',
     accept_content=['json'],
     result_serializer='json',
-    timezone='Europe/Moscow',
+    timezone='UTC',
     enable_utc=True,
 )

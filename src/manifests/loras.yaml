@@ -1,0 +1,46 @@
+# src/manifests/loras.yaml
+
+
+"Flux-Ghibli-Art-LoRA.safetensors":
+
+  prefix: "Ghibli Art"
+
+  description: "A beautiful anime style inspired by Studio Ghibli, featuring lush, painterly landscapes and iconic puffy clouds"
+
+  examples:
+    - "assets/lora_examples/Ghibli-Art/example_1.png"
+    - "assets/lora_examples/Ghibli-Art/example_2.png"
+    - "assets/lora_examples/Ghibli-Art/example_3.png"
+
+
+"Flux-Scenery-LoRA.safetensors":
+
+  suffix: "scenery style"
+
+  description: "An epic fantasy concept art style, characterized by painterly textures, intricate architecture, and dramatic, atmospheric lighting"
+
+
+"Flux-Anime-LoRA.safetensors":
+
+  prefix: "an anm"
+
+  description: "A scenic anime aesthetic featuring rich, emotional color palettes, detailed natural backgrounds, and a clean, polished character art style"
+
+
+"Flux-Dev-Real-Anime-LoRA.safetensors":
+
+  prefix: "Real Anime"
+
+  #suffix: "Fashion photography, high resolution, 50mm lens, f/2.8, natural lighting, global illumination. --ar 85:128 --v 6.0 --style raw."
+
+  description: "A high-fidelity anime style defined by cinematic lighting, soft painterly shading, and clean linework for a polished feel."
+
+
+"Flux-Ghibsky-Art-LoRA.safetensors":
+
+  prefix: "GHIBSKY style"
+
+  description: "Fusion of styles creates enchanting scenes that capture the essence of both Ghibli's whimsical charm and Makoto Shinkai's atmospheric beauty"
+  # Use GHIBSKY style to invoke the model’s unique aesthetic. It’s best to start your prompt with the trigger word,
+  # followed by descriptions of your scene, such as nature, skies, houses, roads, villages, etc.
+  # If you are getting too realistic images, try adding painting to your prompt, for example: GHIBSKY style painting.
