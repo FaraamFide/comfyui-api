@@ -122,6 +122,9 @@ def validate_request(workflow_id: str, params: Dict[str, Any]) -> Dict[str, Any]
         except (TypeError, ValueError):
             raise ValueError(f"Parameter '{param_name}' with value '{value}' must be of type {param_type}.")
         
+        if param_type == "integer" and value is not None and value < 0:
+            raise ValueError(f"Parameter '{param_name}' must be a non-negative integer, but got {value}.")
+        
         if param_name == "model" and value not in app_config.AVAILABLE_MODELS:
             raise ValueError(f"Model '{value}' not found.")
         if param_name == "lora" and value not in app_config.AVAILABLE_LORAS:
