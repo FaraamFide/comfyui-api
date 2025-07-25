@@ -4,6 +4,7 @@ import requests
 import time
 import sys
 from typing import List, Dict, Any
+from urllib.parse import urljoin, urlparse
 
 # Import necessary components from rich
 from rich.console import Console
@@ -181,7 +182,7 @@ def generate_and_wait(session: requests.Session, api_url: str, payload: dict, ti
     return None
 
 if __name__ == "__main__":
-    API_URL = "http://127.0.0.1:8000"
+    API_URL = "127.0.0.1:8000"  # https://v3tsrg-93-156-219-144.ru.tuna.am (example)
 
     # Create a Session object ONCE
     with requests.Session() as session:
@@ -197,8 +198,8 @@ if __name__ == "__main__":
             "workflow_id": "flux_default",
             "params": {
                 "prompt": "sketch of a yellow hugging face emoji with big hands, minimalist, impressionism, negative space, flat beige background",
-                "model": "flux1-dev-Q4_K_S.gguf",
-                "steps": 20,
+                "model": "flux1-schnell-Q4_K_S.gguf",
+                "steps": 4,
                 "lora": "Flux-Ghibli-Art-LoRA.safetensors",
                 "lora_strength": 0.9,
                 "seed": "random"
@@ -208,8 +209,18 @@ if __name__ == "__main__":
         result = generate_and_wait(session, API_URL, payload, title="Generation Task")
         
         if result and result.get("status") == "SUCCESS":
-            url = result['result']['download_url']
-            console.print(f"   [info]Download URL:[/info] [url]{url}[/url]")
+            # ------------------- CLIENT-SIDE URL CORRECTION -------------------
+            # (A fix for running against a proxied or tunneled API server)
+            # The server might return a URL with an incorrect base address.
+            # This ensures a working link by combining the client's trusted
+            # API_URL with the path from the server's response.
+            original_url = result['result']['download_url']
+            path = urlparse(original_url).path    # Extract path, e.g., "/downloads/image.png"
+            correct_url = urljoin(API_URL, path)  # Rebuild the URL with the correct base
+             # ------------------------------------------------------------------
+            
+            console.print(f"   [info]Download URL:[/info] [url]{correct_url}[/url]")
+           
         elif result:
             console.print(f"   [danger]Details:[/danger] {result.get('result', 'No details')}")
 

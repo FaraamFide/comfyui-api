@@ -3,6 +3,7 @@
 import requests
 import time
 import sys
+from urllib.parse import urljoin, urlparse
 
 def ping_server(session: requests.Session, api_url: str) -> bool:
     """Checks if the server is available, using a session."""
@@ -95,7 +96,7 @@ def generate_and_wait_minimal(session: requests.Session, api_url: str, payload: 
 
 
 if __name__ == "__main__":
-    API_URL = "http://127.0.0.1:8000"
+    API_URL = "127.0.0.1:8000"  # https://v3tsrg-93-156-219-144.ru.tuna.am (example)
 
     # Create a Session object ONCE
     with requests.Session() as session:
@@ -103,7 +104,6 @@ if __name__ == "__main__":
         if not ping_server(session, API_URL):
             sys.exit(1)
 
-        # Original payload from the minimal client file
         payload = {
             "workflow_id": "flux_default",
             "params": {
@@ -116,9 +116,20 @@ if __name__ == "__main__":
         
         # Pass the session to the function
         result = generate_and_wait_minimal(session, API_URL, payload)
-        
         if result and result.get("status") == "SUCCESS":
-            print(f"Download URL: {result['result']['download_url']}")
+            # ------------------- CLIENT-SIDE URL CORRECTION -------------------
+            # (A fix for running against a proxied or tunneled API server)
+            # The server might return a URL with an incorrect base address.
+            # This ensures a working link by combining the client's trusted
+            # API_URL with the path from the server's response.
+            original_url = result['result']['download_url']
+            path = urlparse(original_url).path    # Extract path, e.g., "/downloads/image.png"
+            correct_url = urljoin(API_URL, path)  # Rebuild the URL with the correct base
+            # ------------------------------------------------------------------
+
+            print(f"Download URL: {correct_url}")
+           
+
         elif result:
             print(f"Failure Details: {result.get('result', 'No details')}")
         else:
