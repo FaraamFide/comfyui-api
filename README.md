@@ -108,7 +108,7 @@ comfyui-api## 🛠️ Technology Stack
 *   **Task Queue:** [Celery](https://docs.celeryq.dev/en/stable/)
 *   **Message Broker / Result Backend:** [Redis](https://redis.io/)
 *   **Core Generation Engine:** [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
-*   **Docker** [Docker]
+*   **Containerization:** [Docker](https://www.docker.com/)
 
 ---
 
