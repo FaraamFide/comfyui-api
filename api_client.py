@@ -182,7 +182,7 @@ def generate_and_wait(session: requests.Session, api_url: str, payload: dict, ti
     return None
 
 if __name__ == "__main__":
-    API_URL = "127.0.0.1:8000"  # https://v3tsrg-93-156-219-144.ru.tuna.am (example)
+    API_URL = "http://127.0.0.1:8000"
 
     # Create a Session object ONCE
     with requests.Session() as session:
@@ -209,17 +209,9 @@ if __name__ == "__main__":
         result = generate_and_wait(session, API_URL, payload, title="Generation Task")
         
         if result and result.get("status") == "SUCCESS":
-            # ------------------- CLIENT-SIDE URL CORRECTION -------------------
-            # (A fix for running against a proxied or tunneled API server)
-            # The server might return a URL with an incorrect base address.
-            # This ensures a working link by combining the client's trusted
-            # API_URL with the path from the server's response.
-            original_url = result['result']['download_url']
-            path = urlparse(original_url).path    # Extract path, e.g., "/downloads/image.png"
-            correct_url = urljoin(API_URL, path)  # Rebuild the URL with the correct base
-             # ------------------------------------------------------------------
-            
-            console.print(f"   [info]Download URL:[/info] [url]{correct_url}[/url]")
+            # The server provides the full download URL in the response.
+            download_url = result['result']['download_url']
+            console.print(f"   [info]Download URL:[/info] [url]{download_url}[/url]")
            
         elif result:
             console.print(f"   [danger]Details:[/danger] {result.get('result', 'No details')}")

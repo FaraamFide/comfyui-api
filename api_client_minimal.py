@@ -96,7 +96,7 @@ def generate_and_wait_minimal(session: requests.Session, api_url: str, payload: 
 
 
 if __name__ == "__main__":
-    API_URL = "127.0.0.1:8000"  # https://v3tsrg-93-156-219-144.ru.tuna.am (example)
+    API_URL = "http://127.0.0.1:8000"
 
     # Create a Session object ONCE
     with requests.Session() as session:
@@ -117,18 +117,9 @@ if __name__ == "__main__":
         # Pass the session to the function
         result = generate_and_wait_minimal(session, API_URL, payload)
         if result and result.get("status") == "SUCCESS":
-            # ------------------- CLIENT-SIDE URL CORRECTION -------------------
-            # (A fix for running against a proxied or tunneled API server)
-            # The server might return a URL with an incorrect base address.
-            # This ensures a working link by combining the client's trusted
-            # API_URL with the path from the server's response.
-            original_url = result['result']['download_url']
-            path = urlparse(original_url).path    # Extract path, e.g., "/downloads/image.png"
-            correct_url = urljoin(API_URL, path)  # Rebuild the URL with the correct base
-            # ------------------------------------------------------------------
-
-            print(f"Download URL: {correct_url}")
-           
+            # The server provides the full download URL in the response.
+            download_url = result['result']['download_url']
+            print(f"Download URL: {download_url}")
 
         elif result:
             print(f"Failure Details: {result.get('result', 'No details')}")
